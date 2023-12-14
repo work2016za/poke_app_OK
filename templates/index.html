@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/earlyaccess/nicomoji.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=M+PLUS+Rounded+1c" rel="stylesheet">
+  <title>POKE HON</title>
+  <style>
+    body {
+      font-family: "M PLUS Rounded 1c";
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      background-color: #a5d696;
+      font-size: 20px;
+      background-image: url("{{ url_for('static', filename='images/kabigon1.jpg') }}");
+      background-size: cover;
+    }
+
+    .container {
+      padding: 10px;
+      background-color: rgb(251, 252, 204);
+      border-radius: 40px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      min-width: 60%;
+      max-width: 90%;
+      margin: 10px auto;
+      opacity: 0.7;
+    }
+
+    h1 {
+      color: #333;
+      font-family: "Nico Moji";
+      font-size: 5rem;
+      color: #617cb9;
+      text-shadow: 1px 1px 2px rgb(0, 0, 0);
+    }
+
+    h1 rt {
+      color: rgb(53, 40, 126);
+    }
+
+    form {
+      margin: 20px auto;
+      width: 70%;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      margin-bottom: 10px;
+      margin: 10px;
+    }
+
+    #text {
+      width: 95%;
+      margin: 10px auto;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      margin-bottom: 50px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    /* 画像のスタイル */
+    #pokemon-image {
+      position: absolute;
+      width: 300px;
+      /* 画像の幅 */
+      height: 300px;
+      /* 画像の高さ */
+    }
+
+    ul li {
+      list-style: none;
+    }
+
+    input,
+    .result {
+      margin: 20px auto;
+    }
+
+    .balloon {
+      position: relative;
+      top: 345px;
+      /* 下からの距離を調整 */
+      right: -62%;
+      /* 右からの距離を調整 */
+      margin: 2em 0 2em 40px;
+      padding: 15px;
+      background: #fff0c6;
+      border-radius: 30px;
+      width: 140px;
+      z-index: 1;
+    }
+
+    .balloon:before {
+      content: "";
+      position: absolute;
+      top: 98px;
+      left: -36px;
+      /* マイナスの値で左にずらす */
+      width: 13px;
+      height: 12px;
+      bottom: 0;
+      background: #fff0c6;
+      border-radius: 50%;
+    }
+
+    .balloon:after {
+      content: "";
+      position: absolute;
+      top: 73px;
+      left: -23px;
+      /* マイナスの値で左にずらす */
+      width: 20px;
+      height: 18px;
+      bottom: 3px;
+      background: #fff0c6;
+      border-radius: 50%;
+    }
+
+    .balloon p {
+      margin: 0;
+      padding: 0;
+    }
+
+    .balloon2 {
+      position: relative;
+      top: 772px;
+      right: -20%;
+      margin: 2em 0 2em 40px;
+      padding: 15px;
+      background: #fff0c6;
+      border-radius: 30px;
+      width: 140px;
+      display: none;
+      z-index: 1;
+    }
+
+    .balloon2:before {
+      content: "";
+      position: absolute;
+      top: 20%;
+      left: 110%;
+      width: 13px;
+      height: 12px;
+      bottom: 0;
+      background: #fff0c6;
+      border-radius: 50%;
+    }
+
+    .balloon2:after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      /* バルーンの上端から50%位置（バルーンの中央）に配置 */
+      left: 100%;
+      /* バルーンの右端から100%位置（バルーンの左端）に配置 */
+      transform: translateY(-50%);
+      /* バルーンの高さの半分だけ上に移動 */
+      width: 20px;
+      height: 18px;
+      bottom: 3px;
+      background: #fff0c6;
+      border-radius: 50%;
+    }
+
+    .balloon2 p {
+      margin: 0;
+      padding: 0;
+    }
+
+
+    @media screen and (min-width: 1000px) {
+      .wrapper {
+        display: flex;
+      }
+    }
+
+    @media screen and (max-width: 1000px) {
+      .balloon,
+      .balloon2 {
+        display: none !important;
+      }
+    }
+
+
+    @media screen and (max-width: 800px) {
+      .container {
+        width: 80%;
+      }
+
+      h1 {
+        font-size: 160%;
+      }
+
+      input[type="text"],
+      select {
+        width: 100%;
+      }
+
+      #pokemon-image {
+        width: 180px;
+        /* 画像の幅 */
+        height: 180px;
+        /* 画像の高さ */
+      }
+    }
+    
+  </style>
+</head>
+
+<body>
+  <img id="pokemon-image" src="{{ pokemon_data['sprites']['front_default'] }}" alt="Pokemon Image">
+  <div class="balloon" id="balloon" style="display: block;">
+    <p><ruby>翻訳<rt>ほんやく</rt></ruby>したい<ruby>言葉<rt>ことば</rt></ruby>を<ruby>入力<rt>にゅうりょく</rt></ruby>してね</p>
+  </div>
+
+  <div class="balloon2" id="success-balloon2" style="display: none;">
+    <p><ruby>翻訳成功<rt>ほんやくせいこう</rt></ruby>!</p>
+  </div>
+
+  <div class="container">
+    <h1>テキスト<ruby>
+        <rb>翻訳</rb>
+        <rt>ほんやく</rt>
+      </ruby>アプリ</h1>
+
+    <form action="/translate" method="post">
+      <label for="text">テキストを<ruby>入力<rt>にゅうりょく</rt></ruby>:</label>
+      <input type="text" id="text" name="text" required>
+      <label for="target_lang"><ruby>翻訳言語<rt>ほんやくげんご</rt></ruby>を<ruby>選択<rt>せんたく</rt></ruby>してください:</label>
+      <select id="target_lang" name="target_lang" required>
+        <option value="en">英語</option>
+        <!-- <option value="zh-cn">中国語</option> -->
+        <option value="ja">日本語</option>
+        <option value="fr">フランス語</option>
+        <option value="de">ドイツ語</option>
+        <option value="es">スペイン語</option>
+        <option value="nl">オランダ語</option>
+        <option value="sv">スウェーデン語</option>
+        <!-- <option value="he">ヘブライ語</option> -->
+
+
+
+      </select>
+
+      <button type="submit"><ruby>翻訳<rt>ほんやく</rt></ruby>する</button>
+    </form>
+    {% if text %}
+    <div>
+      <h2>入力されたテキスト:</h2>
+      <p>{{ text }}</p>
+    </div>
+    <h2><ruby>翻訳結果<rt>ほんやくけっか</rt></ruby>:</h2>
+    <p>{{ translated_text }}</p>
+    <!-- 翻訳結果の再生ボタンを追加 -->
+    <button id="play-translated-text"><ruby>翻訳<rt>ほんやく</rt></ruby>テキストを<ruby>再生<rt>さいせい</rt></ruby></button>
+
+
+    {% endif %}
+
+    <h2><ruby>翻訳履歴<rt>ほんやくりれき</rt></ruby>:</h2>
+    <ul>
+      {% for text, translated_text in translation_history %}
+      <li>{{ text }} -> {{ translated_text }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  </div>
+  <!-- </div> -->
+
+  <script>
+    const textInput = document.getElementById("text");
+    // 翻訳テキストを読み上げるJavaScript
+    document.getElementById("play-translated-text").addEventListener("click", function () {
+      var translatedText = "{{ translated_text }}"; // 翻訳されたテキストを取得
+      var synth = window.speechSynthesis;
+      var utterance = new SpeechSynthesisUtterance(translatedText);
+      synth.speak(utterance);
+    });
+  </script>
+
+  <!-- その他のポケモン情報を表示 -->
+
+  <script>
+    // 画像の初期位置
+    let x = window.innerWidth / 2 - 50; // 画像の幅の半分を引く
+    let y = window.innerHeight / 2 - 50; // 画像の高さの半分を引く
+
+    // 画像の移動量と方向
+    let moveSpeed = 3;
+    let moveXDirection = 1; // x方向の移動方向
+    let moveYDirection = 1; // y方向の移動方向
+
+    // 画像要素を取得
+    const imageElement = document.getElementById("pokemon-image");
+
+    // メインループ（画像の移動を制御）
+    function moveImage() {
+      // 画像の位置を更新（自動的に移動）
+      x += moveSpeed * moveXDirection;
+      y += moveSpeed * moveYDirection;
+
+      // 画像が画面の端に達した場合、方向を逆にして反対側から再び現れるように制御
+      if (x <= 0 || x >= window.innerWidth - imageElement.width) {
+        moveXDirection *= -1;
+      }
+      if (y <= 0 || y >= window.innerHeight - imageElement.height) {
+        moveYDirection *= -1;
+      }
+
+      // 画像の位置を設定
+      imageElement.style.left = x + "px";
+      imageElement.style.top = y + "px";
+
+      // メインループを再帰的に呼び出す
+      requestAnimationFrame(moveImage);
+    }
+
+    // メインループを開始
+    moveImage();
+
+  </script>
+
+  <script>
+
+    const translatedText = "{{ translated_text }}";
+    const balloon = document.getElementById("balloon");
+    const balloon2 = document.getElementById("success-balloon2");
+
+    if (translatedText.trim() !== "") {
+      // 翻訳後の表示を制御
+      balloon.style.display = "none"; // 翻訳前のバルーン非表示
+      balloon2.style.display = "block"; // 翻訳後のバルーン表示
+    }else {
+      balloon.style.display = "block"; // 翻訳前のバルーン表示
+      balloon2.style.display = "none"; // 翻訳後のバルーン非表示
+    }
+
+    // 画面が小さくなる場合、バルーンを非表示にする
+    if (screenWidth <= 800) {
+      balloon.style.display = "none";
+      balloon2.style.display = "none";
+    }
+
+    // ウィンドウのリサイズイベントを監視してバルーンの表示を更新
+    window.addEventListener('resize', updateBalloonVisibility);
+
+    // ページ読み込み時にも一度実行して初期状態を設定
+    window.addEventListener('load', updateBalloonVisibility);
+
+  </script>
+</body>
+
+</html>
